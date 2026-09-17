@@ -1,6 +1,8 @@
-# SCRIPT-ARCHIVE
+# SCRIPT ARCHIVE
 
 A personal archive of standalone scripts and small projects, not a single cohesive application. Each top-level folder is independent: different language, different purpose, no shared runtime between them. Treat this repository as a collection, not a monorepo in the "shared build system" sense.
+
+<img width="1800" height="1000" alt="ZREX ARCHIVE" src="https://github.com/user-attachments/assets/2add23a7-daff-44ed-a3b3-6636524ac5b1" />
 
 ## What's in here
 
