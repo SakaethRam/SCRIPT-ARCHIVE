@@ -34,4 +34,4 @@ This is a personal archive rather than a project soliciting outside contribution
 
 # License
 
-ML-NEURL is distributed under the terms defined in `LICENSE`.
+SCRIPT ARCHIVE is distributed under the terms defined in `LICENSE`.
