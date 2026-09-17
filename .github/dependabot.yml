@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # PCI-Framework has its own requirements.txt (and an accidental
+  # duplicate under PCI-Framework-main/ — see docs/REPO_HYGIENE.md;
+  # remove the second entry below once that duplicate is cleaned up).
+  - package-ecosystem: "pip"
+    directory: "/PCI-Framework"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "pip"
+    directory: "/PCI-Framework/PCI-Framework-main"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
