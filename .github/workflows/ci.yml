@@ -1,0 +1,120 @@
+name: ci
+
+# One shared workflow across the archive. Each job only runs when a
+# file under its own sub-project path changes, since the folders in
+# this repo don't share a build system or dependency set.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  python-lint:
+    name: Python lint (TRADING, PCI-Framework)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            trading:
+              - 'TRADING/**/*.py'
+            pci:
+              - 'PCI-Framework/**/*.py'
+
+      - name: Set up Python
+        if: steps.changes.outputs.trading == 'true' || steps.changes.outputs.pci == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ruff
+        if: steps.changes.outputs.trading == 'true' || steps.changes.outputs.pci == 'true'
+        run: pip install ruff
+
+      - name: Lint TRADING
+        if: steps.changes.outputs.trading == 'true'
+        run: ruff check TRADING/ --exit-zero
+        # exit-zero: TRADING scripts are strategy-tuning experiments,
+        # not a shipped package — surface lint issues without failing
+        # the build over stylistic nits in exploratory code.
+
+      - name: Lint PCI-Framework
+        if: steps.changes.outputs.pci == 'true'
+        run: ruff check PCI-Framework/src/ PCI-Framework/PCI-Framework-main/src/ --exit-zero || true
+        # Two paths checked deliberately: see docs/REPO_HYGIENE.md for
+        # the duplicate-folder issue. Remove the second path once
+        # that's cleaned up.
+
+  html-lint:
+    name: HTML lint (WORKFLOW, HCJ-PortFolio)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            html:
+              - 'WORKFLOW/**/*.html'
+              - 'HCJ-PortFolio/**/*.html'
+
+      - name: Set up Node
+        if: steps.changes.outputs.html == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install htmlhint
+        if: steps.changes.outputs.html == 'true'
+        run: npm install -g htmlhint
+
+      - name: Lint HTML
+        if: steps.changes.outputs.html == 'true'
+        run: htmlhint "WORKFLOW/**/*.html" "HCJ-PortFolio/**/*.html" || true
+        # Non-blocking: these are static demo/portfolio pages, not a
+        # shipped web app with an accessibility/standards bar to gate on.
+
+  markdown-lint:
+    name: Markdown lint (all docs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            md:
+              - '**/*.md'
+
+      - name: Lint Markdown
+        if: steps.changes.outputs.md == 'true'
+        uses: DavidAnson/markdownlint-cli2-action@v17
+        with:
+          globs: |
+            **/*.md
+            !**/PCI-Framework-main/**
+
+  repo-hygiene-check:
+    name: Flag known hygiene issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Warn if the duplicate PCI-Framework-main folder still exists
+        run: |
+          if [ -d "PCI-Framework/PCI-Framework-main" ]; then
+            echo "::warning::PCI-Framework/PCI-Framework-main duplicate folder still present — see docs/REPO_HYGIENE.md"
+          fi
+
+      - name: Warn on hardcoded C:\Users paths
+        run: |
+          if grep -RIn 'C:\\\\Users\\\\' --include="*.py" . ; then
+            echo "::warning::Found a hardcoded user-specific Windows path — see docs/VISPER-HOTKEY.md"
+          fi
