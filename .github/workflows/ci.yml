@@ -15,7 +15,7 @@ jobs:
     name: Python lint (TRADING, PCI-Framework)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dorny/paths-filter@v3
         id: changes
@@ -54,7 +54,7 @@ jobs:
     name: HTML lint (WORKFLOW, HCJ-PortFolio)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dorny/paths-filter@v3
         id: changes
@@ -84,7 +84,7 @@ jobs:
     name: Markdown lint (all docs)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dorny/paths-filter@v3
         id: changes
@@ -105,7 +105,7 @@ jobs:
     name: Flag known hygiene issues
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Warn if the duplicate PCI-Framework-main folder still exists
         run: |
