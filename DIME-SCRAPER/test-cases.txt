@@ -1,0 +1,10 @@
+For Instagram:
+Summarize the profile's bio, identify its main content themes, and list the relevant fields that support your conclusions.
+
+URL: https://www.instagram.com/nasa
+
+
+For LinkedIn:
+Summarize the person's current role, career progression, and professional areas of focus. Separate retrieved facts from inferences.
+
+URL: https://www.linkedin.com/in/satyanadella/
